@@ -1,0 +1,15 @@
+{
+  "name": "delivery-flow-marketplace",
+  "owner": {
+    "name": "Fred Simas"
+  },
+  "description": "交付型敏捷 AI 研发工作流插件市场",
+  "version": "0.1.0",
+  "plugins": [
+    {
+      "name": "delivery-flow",
+      "source": "./",
+      "description": "在 BMAD v6 + Superpowers 之上补齐乙方交付的四个差异化关卡（客户签字/飞书SSOT同步/AI评测内循环/客户验收）+ 角色路由入口。装上即全员按同一流水线走，脱离个人也能运转。"
+    }
+  ]
+}

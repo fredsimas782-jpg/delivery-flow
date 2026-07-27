@@ -1,0 +1,78 @@
+{
+  "_说明": "本地任务ID ↔ 飞书ID 的三级映射（清单→父任务→子任务），是 upsert 防重复的地基。机器维护，勿手改。",
+  "_结构说明": "三级嵌套：tasklists[name].guid → parent_tasks[name].guid → subtasks[id] = guid。每层都要回填飞书返回的 task_id。",
+  "_同步规则": "推送前先查此表：本地ID已存在→update（更新阶段状态/描述）；不存在→create后立即回写 task_id 到此表。绝不盲目新建。",
+
+  "project": "<项目名>",
+  "feishu_user_open_id": "<操作用户open_id>",
+  "feishu_user_name": "<操作用户姓名>",
+
+  "custom_field_阶段状态": {
+    "_说明": "每个飞书清单需要独立创建「阶段状态」单选字段。建好后把字段GUID和选项GUID填在此处，子任务创建时按所在清单使用对应的 field_guid 和 option_guid。同一项目中不同清单的 GUID 各不相同。",
+    "<模块/清单A名>": {
+      "field_guid": "<该清单的阶段状态字段的GUID>",
+      "options": {
+        "待开发": "<option_guid>",
+        "开发中": "<option_guid>",
+        "测试中": "<option_guid>",
+        "已上线": "<option_guid>",
+        "缺陷": "<option_guid>",
+        "优化": "<option_guid>"
+      }
+    },
+    "<模块/清单B名>": {
+      "field_guid": "<该清单的阶段状态字段的GUID>",
+      "options": {
+        "待开发": "<option_guid>",
+        "开发中": "<option_guid>",
+        "测试中": "<option_guid>",
+        "已上线": "<option_guid>",
+        "缺陷": "<option_guid>",
+        "优化": "<option_guid>"
+      }
+    }
+  },
+
+  "tasklists": {
+    "【示例】一个已填好三级嵌套的清单节点（其他同名占位符请用此结构填充）": {
+      "name": "【<项目名>】<模块名>",
+      "_说明": "飞书清单名建议加【项目名】前缀，以便多项目时按命名归拢。飞书左侧文件夹需手动拖入（API无法创建分组），此为一次性操作。",
+      "guid": "<清单GUID>",
+      "parent_tasks": {
+        "<父任务标题>": {
+          "_说明": "父任务 = 一个功能/一个页面/一个story",
+          "guid": "<父任务GUID>",
+          "subtasks": {
+            "<本地子任务ID_A>": "<子任务GUID>",
+            "<本地子任务ID_B>": "<子任务GUID>"
+          }
+        },
+        "<另一个父任务标题>": {
+          "guid": "<父任务GUID>",
+          "subtasks": {
+            "<本地子任务ID>": "<子任务GUID>"
+          }
+        }
+      }
+    },
+
+    "<模块/清单A名>": {
+      "name": "【<项目名>】<模块/清单A名>",
+      "guid": "<清单GUID>",
+      "parent_tasks": {
+        "<父任务标题>": {
+          "guid": "<父任务GUID>",
+          "subtasks": {
+            "<本地子任务ID>": "<子任务GUID>"
+          }
+        }
+      }
+    },
+
+    "<模块/清单B名>": {
+      "name": "【<项目名>】<模块/清单B名>",
+      "guid": "<清单GUID>",
+      "parent_tasks": {}
+    }
+  }
+}

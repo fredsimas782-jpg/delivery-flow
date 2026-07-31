@@ -10,6 +10,12 @@
       "name": "delivery-flow",
       "source": "./",
       "description": "在 BMAD v6 + Superpowers 之上补齐乙方交付的四个差异化关卡（客户签字/飞书SSOT同步/AI评测内循环/客户验收）+ 角色路由入口。装上即全员按同一流水线走，脱离个人也能运转。"
+    },
+    {
+      "name": "superpowers",
+      "source": "obra/superpowers",
+      "description": "研发内功基座：TDD / 系统化调试 / quick-dev / code-review，delivery-flow 研发环节的执行框架。安装后研发角色从飞书领活直接进入 Superpowers 工作流。",
+      "required": true
     }
   ]
 }

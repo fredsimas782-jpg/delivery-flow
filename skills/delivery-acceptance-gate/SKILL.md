@@ -15,7 +15,8 @@ description: 乙方交付的客户验收关卡（出口关卡，与 client-gate 
 
 ## 输入
 
-- **已签字的 `客户确认记录`**（client-gate 冻结的范围快照 = 验收唯一依据）
+- **已签字的 `客户确认记录`**（client-gate 冻结的范围快照 = 验收范围依据）
+- `SPEC.md`（机读契约，`Success signal` 字段 = 验收 DoD 机读锚点）
 - 交付物清单（系统/文档/培训材料/等）
 - 性能/KPI 实测数据、评测报告、测试报告
 
@@ -25,13 +26,14 @@ description: 乙方交付的客户验收关卡（出口关卡，与 client-gate 
 
 ## 硬规则
 
-1. **验收依据 = client-gate 冻结的范围快照**。只验签字范围内的，范围外的不在本次验收。
+1. **验收依据 = client-gate 冻结的范围快照 + SPEC.md 机读契约**。用 SPEC.md 的 `Success signal` 字段作验收 DoD 的机读锚点，不再靠人工提炼 PRD。只验签字范围内的，范围外的不在本次验收。
 2. **未取得客户验收签字 → 关卡状态「未交付」**，项目不得标记完成/回款/转运维。
 3. 未通过项走 **client-gate 的变更机制**（更新确认记录重签），不在验收时临时扩范围。
 
 <workflow>
 
 <step n="1" goal="调取验收依据">
+  <action>读 SPEC.md，提取 `Success signal` 字段——这是每条验收 DoD 的机读锚点。</action>
   <action>读已签字的 `客户确认记录`，取范围快照与每条功能的验收 DoD。</action>
   <action>读交付物清单、KPI 目标、评测/测试报告。</action>
 </step>

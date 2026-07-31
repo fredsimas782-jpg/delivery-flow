@@ -5,13 +5,13 @@ description: 乙方交付的客户签字关卡。在 PRD/原型完成后、进�
 
 # 客户签字关卡（delivery-client-gate）
 
-**目标**：BMAD 是内部研发框架，没有乙方↔客户的交付确认环节。本工作流补上这一关——把 PRD/原型冻结成客户可签字的确认件，**未签字不放行开发**，从源头挡住"边做边改、验收扯皮"。
+**目标**：BMAD 是内部研发框架，没有乙方↔客户的交付确认环节。本工作流补上这一关——把 SPEC.md + PRD/原型冻结成客户可签字的确认件，**未签字不放行开发**，从源头挡住"边做边改、验收扯皮"。范围快照从 SPEC.md 的机读字段（Why / Capabilities / Constraints）生成，不再靠人工提炼 PRD 全文猜范围。
 
 **角色**：你是项目经理，负责组织客户确认、锁定范围、记录变更。
 
 ## 何时用
 
-在 BMAD 产出 PRD（`bmad-prd`）与原型/UX（`bmad-ux`）之后、拆 epics/stories（`bmad-create-epics-and-stories`）**之前**。这是"产品设计 → 研发"之间的强制关口。
+在 BMAD 产出 `SPEC.md`（机读契约）+ PRD（`bmad-prd`）与原型/UX（`bmad-ux`）之后、进入 `bmad-architecture` / `bmad-check-implementation-readiness` 之前。这是"产品设计 → 方案化"之间的强制关口。
 
 三种入口：
 - **A 全新确认**：范围还没跟客户对齐 → 组织一次确认并签字（走 step1→2→3→4）。
@@ -20,8 +20,9 @@ description: 乙方交付的客户签字关卡。在 PRD/原型完成后、进�
 
 ## 输入
 
-- PRD（BMAD planning_artifacts 下的 `*prd*.md`）
-- 原型/UX 文档（`*ux*.md` 或项目原型目录）
+- `SPEC.md`（BMAD `bmad-spec` 产出，五字段机读契约：Why / Capabilities / Constraints / Non-goals / Success signal）——**范围快照的主要来源**，从机读字段生成范围清单
+- PRD（BMAD `bmad-prd` 产出，`*prd*.md`）——功能细节补充
+- 原型/UX 文档（`*ux*.md` 或项目原型目录，含 HTML 演示原型）——界面与交互依据
 - 上一版客户确认记录（如有，用于比对变更）
 - **（B 入口）客户已确认的原始材料**（甲方原始需求材料的往返确认件 / 确认邮件 / 会议纪要）——作为范围基线来源与登记依据
 
@@ -42,18 +43,24 @@ description: 乙方交付的客户签字关卡。在 PRD/原型完成后、进�
 <workflow>
 
 <step n="0" goal="判定入口">
+  <action>先读 SPEC.md，提取 Why / Capabilities / Constraints 三字段——这是后续所有步骤的范围锚点。</action>
   <action>问（或从上下文判断）：客户是否**已经**以某种形式确认过本次范围？</action>
   <action>否 → 走 **A 全新确认**：step1 → 2 → 3 → 4。</action>
   <action>是 → 走 **B 存量确认登记**：step1 → 2 → 4，**跳过 step3**（不再组织客户重新走查签字）。要求用户指明已有确认的**留痕位置与形式**（甲方原始需求材料的往返确认件、确认邮件、会议纪要）。</action>
 </step>
 
 <step n="1" goal="冻结范围快照">
-  <action>读取 PRD 与原型/UX 文档。B 入口下，**同时读取客户已确认的原始材料**，以其为范围基线的事实来源。</action>
-  <action>提炼「本次交付范围」：功能清单、每条功能对应的 PRD 章节/原型页、明确的验收 DoD。</action>
-  <action>提炼「本次明确不做」：排除项，防止客户事后主张。</action>
+  <action>读 SPEC.md + PRD 与原型/UX 文档。B 入口下，**同时读取客户已确认的原始材料**，以其为范围基线的事实来源。</action>
+  <action>从 SPEC.md 机读字段生成「本次交付范围」：</action>
+  <action>· Why → 一句话说清"做这个产品为了解决什么问题"（给客户看）</action>
+  <action>· Capabilities → 逐条转成功能清单（每条功能一句话说清做成什么样）</action>
+  <action>· Constraints → 转成限制说明（预算/工期/技术约束，给客户明确边界）</action>
+  <action>· Non-goals → 转成「本次明确不做」（防止客户事后主张）</action>
+  <action>· Success signal → 转成验收 DoD 摘要（每个 success signal 对应一条验收标准）</action>
+  <action>PRD/原型作功能细节与界面依据补充，不主驱动范围快照。</action>
   <action>若存在上一版确认记录，逐条比对，生成「变更清单」（新增/修改/删除 + 原因 + 对工期/预算影响）。</action>
   <check if="B 入口">
-    <action>核对 PRD/原型是否与客户已确认的原始材料一致。**若发现 PRD/原型已超出或偏离已确认范围**，标出差异——这部分属于"尚未确认"，需退回 A 入口就差异部分补确认，不能默认放行。</action>
+    <action>核对 SPEC.md / PRD / 原型是否与客户已确认的原始材料一致。**若发现超出或偏离已确认范围**，标出差异——这部分属于"尚未确认"，需退回 A 入口就差异部分补确认，不能默认放行。</action>
   </check>
 </step>
 

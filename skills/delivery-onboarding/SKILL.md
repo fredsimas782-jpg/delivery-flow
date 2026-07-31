@@ -11,7 +11,7 @@ description: 交付流水线的总入口与角色路由器。新成员装上插�
 
 ## 分层设计（本模块的定位）
 
-BMAD 在此**当方法论脚手架 + 文档工具箱**——前端探索（brainstorming / research / product-brief / prfaq）、引导式 PRD、SPEC 机读契约、架构脊柱、拆故事，这些方法论能力全开；专人经验换成 coached 引导，新人也能按标准干。**不启用** BMAD 的 sprint-status / 多 agent 重交接 / bmb 自举——执行状态真源在飞书，不搞双状态机；复盘/圆桌等仪式感重的工具留扩展点。
+BMAD 在此当方法论脚手架 + 文档工具箱——前端探索、研究、product-brief、PRFAQ、SPEC、引导式 PRD、UX、架构、技术就绪和拆故事能力全开；专人经验换成 coached 引导，新人也能按标准干。**不把** BMAD 的 sprint-status 当执行状态写端：执行状态真源在飞书，本地 `sprint-status.yaml` 只由 `delivery-sprint-sync` 单向刷新；多 agent 重交接、bmb 自举、复盘/圆桌等按需使用，不作为日常主流程强制步骤。
 
 ## 全景流水线（谁在哪一环）
 
@@ -44,7 +44,7 @@ BMAD 在此**当方法论脚手架 + 文档工具箱**——前端探索（brain
 | 架构师/技术lead | SPEC.md + PRD | 方案化/技术就绪 | `bmad-architecture` |
 
 > ★ `bmad-spec` 的 SPEC.md 是全链机读契约：Why/Capabilities/Constraints/Non-goals/Success signal 五个字段，下游所有关卡（客户签字范围快照、架构输入、验收 DoD）从它读机读字段，不再靠文件名 glob 猜。
-> 前端原型 skill 处于「待新建」，在 PRD→客户签字 之间插入 HTML 演示原型环节（整页可交互，非 bmad-ux 的 2-4 屏静态 mock）。
+> `delivery-prototype-html` 已提供前端原型能力，位于 PRD→客户签字之间，产出整页可交互 HTML 演示（非 bmad-ux 的 2-4 屏静态 mock）。
 
 <workflow>
 

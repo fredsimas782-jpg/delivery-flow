@@ -6,11 +6,13 @@
 
 ## 它解决什么
 
-需求接入 → 分析 → PRD → 产品设计 → 原型 → **客户签字** → 拆任务进飞书 → 敏捷研发 → **AI 评测** → 测试 → **客户验收**。全程有依据、有关卡。
+需求接入 → BMAD 分析立项 → SPEC / PRD / UX → HTML 原型 → **客户签字** → 架构 / 技术就绪 → Story 拆解进飞书 → Superpowers 研发 → **AI 评测** → 测试 → **客户验收**。全程有依据、有关卡。
 
-## 轻量模式（本模块的定位取舍）
+## 标准模式（本模块的定位）
 
-对小团队/单项目，**BMAD 只当"前端文档工具箱"**——用它的 PRD/story 模板与角色 agent 产文档。**不启用** BMAD 的 sprint-status、多 agent 重交接、correct-course 重流程。**执行状态的唯一真源在飞书**，避免两套状态源打架。
+**BMAD 的产品与规划能力全开**：分析研究、SPEC、PRD、UX、架构、技术就绪检查和 Story 拆解都优先复用 BMAD。**Superpowers** 负责研发阶段的 TDD、调试和验证。飞书是执行状态唯一写端，本地 `sprint-status.yaml` 仅由 `delivery-sprint-sync` 从飞书单向拉取，作为只读镜像。
+
+本仓库提供的是 Markdown 工作流规范、模板和角色路由，不是带运行时代码的项目管理系统；飞书 API、评测执行器和自动门禁依赖外部技能或人工执行。
 
 ## 分层设计（只建市面上没有的）
 
@@ -19,13 +21,15 @@ Layer0 基座（安装，不自建）
   ├─ BMAD-METHOD v6  文档工具箱：角色 agent + PRD/story 模板 + project-context 生成
   └─ Superpowers      研发内功：TDD / 系统化调试 / 写计划 / 验证
 
-Layer1 本模块四个差异化关卡（BMAD 没有、必须自建）
+Layer1 本模块差异化交付能力（补 BMAD 未覆盖的业务关卡与编排）
   ├─ delivery-client-gate      入口：客户签字关卡（未签字不进开发）
   ├─ delivery-feishu-sync      拆任务：故事 → 飞书「清单>父任务>子任务」，飞书=执行真源
-  ├─ delivery-eval-loop        AI 评测内循环（Tier1 引用覆盖/引用忠实/拒答正确→达阈值放行；Tier2 需专家）
-  └─ delivery-acceptance-gate  出口：客户验收关卡（对着签字范围核对 KPI/DoD，取得验收签字）
+  ├─ delivery-sprint-sync       状态镜像：飞书 → 本地 sprint-status.yaml（只读）
+  ├─ delivery-eval-loop        AI 评测内循环（Tier1 达阈值放行；Tier2 需专家）
+  ├─ delivery-acceptance-gate  出口：客户验收关卡（对签字范围核 KPI/DoD）
+  └─ delivery-prototype-html    规划编排：将 BMAD UX 产物转为可交互 HTML 演示原型
 
-Layer2 上手编排（"装上就跑"入口）
+Layer2 上手编排（“装上就跑”入口）
   └─ delivery-onboarding   识别角色 → 确保基座就位 → 发放角色依据 → 路由到对应阶段
 ```
 
@@ -33,15 +37,17 @@ Layer2 上手编排（"装上就跑"入口）
 
 | 能力 | 由谁提供 |
 |---|---|
-| 角色 agent（分析/PM/UX 等）+ PRD/story 模板 | BMAD（当文档工具箱用）|
+| 角色 agent（分析/PM/UX 等）+ SPEC / PRD / Story 模板 | BMAD |
 | 项目宪法（AI 必守规则）| BMAD `generate-project-context` → `project-context.md` |
 | 研发内功（TDD/调试/验证）| Superpowers |
 | **客户签字关卡（入口）** | **本模块 delivery-client-gate** |
 | **飞书任务 SSOT 同步（飞书=执行真源）** | **本模块 delivery-feishu-sync**（编排 lark-* skills）|
+| **飞书状态本地只读镜像** | **本模块 delivery-sprint-sync** |
+| **HTML 交互原型编排** | **本模块 delivery-prototype-html**（读取 bmad-ux 产物）|
 | **AI 输出评测内循环** | **本模块 delivery-eval-loop** |
 | **客户验收关卡（出口）** | **本模块 delivery-acceptance-gate** |
 
-> 轻量模式下**不启用** BMAD 的 sprint-status / 多 agent 交接 / correct-course——这些对小团队过重。变更走 client-gate 重签即可。
+> BMAD 的产品与规划能力全开；`sprint-status.yaml` 不作为本地写端，仅由 `delivery-sprint-sync` 从飞书单向刷新。
 
 ## 安装
 

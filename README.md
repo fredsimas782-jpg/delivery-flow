@@ -29,7 +29,8 @@ Layer1 本模块差异化交付能力（补 BMAD 未覆盖的业务关卡与编�
   ├─ delivery-acceptance-gate  出口：客户验收关卡（对签字范围核 KPI/DoD）
   └─ delivery-prototype-html    规划编排：将 BMAD UX 产物转为可交互 HTML 演示原型
 
-Layer2 上手编排（“装上就跑”入口）
+Layer2 上手编排（”装上就跑”入口）
+  ├─ delivery-bootstrap    从零安装：环境检查 → 注册插件 → 装依赖 → 创建初始文件
   └─ delivery-onboarding   识别角色 → 确保基座就位 → 发放角色依据 → 路由到对应阶段
 ```
 
@@ -46,16 +47,19 @@ Layer2 上手编排（“装上就跑”入口）
 | **HTML 交互原型编排** | **本模块 delivery-prototype-html**（读取 bmad-ux 产物）|
 | **AI 输出评测内循环** | **本模块 delivery-eval-loop** |
 | **客户验收关卡（出口）** | **本模块 delivery-acceptance-gate** |
+| **从零安装引导** | **本模块 delivery-bootstrap** |
 
 > BMAD 的产品与规划能力全开；`sprint-status.yaml` 不作为本地写端，仅由 `delivery-sprint-sync` 从飞书单向刷新。
 
 ## 安装
 
-见 `.claude-plugin/marketplace.json`。消费方项目需先安装 BMAD v6 与 Superpowers（delivery-onboarding 会检测并提示）。
+> **最快方式**：在 Claude Code 中说 **"装 delivery-flow"** 或 **"bootstrap"**，`delivery-flow` 会自动引导完成环境搭建，无需手动查阅文档。
+
+📖 **快速安装指南** → 详见 [`安装指南.md`](安装指南.md)。含 Claude Code 一键安装和其他工具（Codex / Cursor / Windsurf）分步指引。
 
 📖 **分步安装与上手指引** → 详见 [`docs/安装与上手.md`](docs/安装与上手.md)。含安装命令、角色分工表、端到端示例流程。
 
-🧪 **本地运行时自动化** → 详见 [`docs/runtime.md`](docs/runtime.md)。提供只读检查、追溯、状态汇总、飞书 dry-run 预演和**阶段进度追踪**（`progress` 命令），不建设完整流程平台。
+🔧 **非 Claude Code 工具安装** → 详见 [`docs/跨工具安装指南.md`](docs/跨工具安装指南.md)。Codex / Cursor / Windsurf 各有对应配置步骤。
 
 ## 实例层（换项目只换这个）
 

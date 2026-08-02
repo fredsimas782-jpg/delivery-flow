@@ -6,7 +6,7 @@
 
 ## 它解决什么
 
-需求接入 → BMAD 分析立项 → SPEC / PRD / UX → HTML 原型 → **客户签字** → 架构 / 技术就绪 → Story 拆解进飞书 → Superpowers 研发 → **AI 评测** → 测试 → **客户验收**。全程有依据、有关卡。
+需求接入 → BMAD 分析立项 → SPEC / PRD / UX → HTML 原型 → **客户签字** → 架构 / 技术就绪 → Story 拆解进飞书 → Superpowers 研发 → **AI 评测** → 测试 → **客户验收**。全程有依据、有关卡。`project-progress.yaml` 持久化记录当前所处阶段，由关卡 skill 自动写入。
 
 ## 标准模式（本模块的定位）
 
@@ -54,6 +54,8 @@ Layer2 上手编排（“装上就跑”入口）
 见 `.claude-plugin/marketplace.json`。消费方项目需先安装 BMAD v6 与 Superpowers（delivery-onboarding 会检测并提示）。
 
 📖 **分步安装与上手指引** → 详见 [`docs/安装与上手.md`](docs/安装与上手.md)。含安装命令、角色分工表、端到端示例流程。
+
+🧪 **本地运行时自动化** → 详见 [`docs/runtime.md`](docs/runtime.md)。提供只读检查、追溯、状态汇总、飞书 dry-run 预演和**阶段进度追踪**（`progress` 命令），不建设完整流程平台。
 
 ## 实例层（换项目只换这个）
 

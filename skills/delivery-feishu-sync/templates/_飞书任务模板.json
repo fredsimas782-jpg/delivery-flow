@@ -1,0 +1,40 @@
+{
+  "_说明": "飞书任务创建参数模板，由 feishu-sync 填充后推送。包含父任务和子任务的标准结构。",
+
+  "parent_task": {
+    "_说明": "父任务 = 一个功能 / 一个页面 / 一个 story",
+    "title": "{{story_title}}",
+    "description": "## DoD\n\n{{dod}}\n\n## 交付物\n\n{{deliverables}}\n\n## SPEC 引用\n\n{{spec_ref}}",
+    "custom_fields": {
+      "阶段状态": "待开发"
+    }
+  },
+
+  "subtask": {
+    "_说明": "子任务 = 一个可独立完成的工作单元，不等于 AC 条数",
+    "title": "{{task_title}}",
+    "description": "## 做什么\n\n{{what}}\n\n## DoD\n\n{{dod}}\n\n## 交付物\n\n{{deliverables}}\n\n## SPEC 引用\n\n{{spec_ref}}",
+    "custom_fields": {
+      "阶段状态": "待开发"
+    }
+  },
+
+  "_params": {
+    "_说明": "lark-cli 调用时的 --params 和 --data 参考",
+    "create_parent": {
+      "description": "lark-cli task +create --data '{\"title\":\"...\",\"description\":\"...\"}' --as user"
+    },
+    "create_subtask": {
+      "description": "lark-cli task subtasks create --params '{\"task_guid\":\"<父任务guid>\"}' --data '{\"title\":\"...\",\"description\":\"...\",\"tasklists\":[{\"tasklist_guid\":\"<清单guid>\"}]}' --as user",
+      "_warning": "子任务 --data 必须显式带 tasklists:[{tasklist_guid}]，schema 不标 required 但实际隐性必填，否则返回500"
+    }
+  },
+
+  "_三要素检查": [
+    "做什么（title + description 做什么段）",
+    "DoD（description DoD 段，引 AC 编号）",
+    "交付物（description 交付物段）"
+  ],
+
+  "_幂等规则": "推送前查 _映射表.json：本地ID已存在→update；不存在→create后立即回写task_id。绝不盲目新建。"
+}

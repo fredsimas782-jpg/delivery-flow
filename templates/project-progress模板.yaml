@@ -1,0 +1,48 @@
+# project-progress.yaml — 流水线宏观阶段追踪
+# 由关卡 skill 在阶段变更时写入，onboarding 读取后直接告诉用户"你在这里"。
+# 不是 Story 粒度的执行状态（那是 sprint-status.yaml + 飞书的事）。
+# 不与 sprint-status.yaml 重叠——本文件追踪"PM 到流水线哪一步了"。
+
+project: "示例项目"
+
+# 当前所处阶段（最新 in_progress 的阶段）
+current_stage: "requirements"
+
+# 各阶段状态：pending → in_progress → done
+stages:
+  requirements:
+    status: done
+    completed_at: "2026-07-20"
+  analysis:
+    status: done
+    completed_at: "2026-07-22"
+  prd:
+    status: done
+    completed_at: "2026-07-25"
+  ux:
+    status: done
+    completed_at: "2026-07-27"
+  prototype:
+    status: done
+    completed_at: "2026-07-28"
+  client_gate:
+    status: done
+    completed_at: "2026-07-30"
+    gate_evidence: "客户确认记录-2026-07-30.md"
+  architecture:
+    status: in_progress
+    started_at: "2026-07-31"
+  tech_readiness:
+    status: pending
+  story_breakdown:
+    status: pending
+  feishu_sync:
+    status: pending
+  development:
+    status: pending
+  eval:
+    status: pending
+  qa:
+    status: pending
+  acceptance_gate:
+    status: pending

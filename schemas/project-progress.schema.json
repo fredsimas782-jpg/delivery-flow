@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "project-progress",
+  "description": "流水线宏观阶段追踪文件的 schema，由关卡 skill 在阶段变更时写入",
+  "type": "object",
+  "required": ["project", "current_stage", "stages"],
+  "properties": {
+    "project": {
+      "type": "string",
+      "description": "项目名称，与 project-context.md 一致"
+    },
+    "current_stage": {
+      "type": "string",
+      "description": "当前所处阶段（最新 in_progress 的阶段）",
+      "enum": [
+        "requirements",
+        "analysis",
+        "prd",
+        "ux",
+        "prototype",
+        "client_gate",
+        "architecture",
+        "tech_readiness",
+        "story_breakdown",
+        "feishu_sync",
+        "development",
+        "eval",
+        "qa",
+        "acceptance_gate"
+      ]
+    },
+    "stages": {
+      "type": "object",
+      "description": "各阶段状态，key 为阶段标识",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["status"],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["pending", "in_progress", "done"]
+          },
+          "started_at": {
+            "type": "string",
+            "description": "阶段开始时间 (YYYY-MM-DD)"
+          },
+          "completed_at": {
+            "type": "string",
+            "description": "阶段完成时间 (YYYY-MM-DD)"
+          },
+          "gate_evidence": {
+            "type": "string",
+            "description": "关卡通过的证据文件名（仅关卡阶段）"
+          },
+          "note": {
+            "type": "string",
+            "description": "备注"
+          }
+        }
+      }
+    }
+  }
+}

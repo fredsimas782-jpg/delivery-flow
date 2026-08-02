@@ -65,7 +65,7 @@ description: 乙方交付的客户签字关卡。在 PRD/原型完成后、进�
 </step>
 
 <step n="2" goal="生成客户确认记录">
-  <action>按 `templates/客户确认记录模板.md` 填写：范围快照、变更清单、验收 DoD 摘要、遗留/待定项。</action>
+  <action>按 `skills/delivery-client-gate/templates/客户确认记录模板.md` 填写：范围快照、变更清单、验收 DoD 摘要、遗留/待定项。</action>
   <action>语言直白、面向客户，避免内部术语。每条功能一句话说清"做成什么样算完成"。</action>
   <check if="B 入口">
     <action>「签字」栏登记**已有确认的形式与出处**（如"客户于 {date} 邮件确认甲方原始需求材料 vX"），并附留痕链接/路径。这是登记既有事实，不是补签新字。</action>
@@ -87,6 +87,7 @@ description: 乙方交付的客户签字关卡。在 PRD/原型完成后、进�
   </check>
   <check if="已签字 或 B入口已登记有效存量确认">
     <action>关卡状态标记「放行」，冻结范围快照。</action>
+    <action>**写入进度**：更新 `project-progress.yaml`，将 `client_gate` 阶段标记为 `done` + `completed_at`，`current_stage` 更新为 `architecture`。若文件不存在，从 `templates/project-progress模板.yaml` 创建。</action>
     <action>提示下一步：进入 `bmad-create-epics-and-stories` 拆解，再走 `delivery-feishu-sync` 推飞书。</action>
   </check>
   <check if="未签字（A 入口）或 存量确认与 PRD/原型有未消解差异（B 入口）">

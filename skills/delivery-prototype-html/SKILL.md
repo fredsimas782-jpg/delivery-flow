@@ -116,6 +116,8 @@ prototype/
 
 <action>输出原型目录到约定路径，告知用户原型位置和打开方式（双击 index.html）。</action>
 
+<action>**写入进度**：更新 `project-progress.yaml`，将 `prototype` 阶段标记为 `done` + `completed_at`，`current_stage` 更新为 `client_gate`。若文件不存在，从 `templates/project-progress模板.yaml` 创建。</action>
+
 <action>建议：原型完成后走 `delivery-client-gate` 的 A 入口（全新确认），附上原型目录给客户走查。</action>
 
 </step>

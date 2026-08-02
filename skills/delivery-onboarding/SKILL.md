@@ -37,11 +37,12 @@ BMAD 在此当方法论脚手架 + 文档工具箱——前端探索、研究、
 
 | 角色 | 工作依据 | 主责阶段 | 调用 |
 |---|---|---|---|
-| 产品经理 | 需求原文 + `project-context.md`(红线) + `SPEC.md`(机读契约) | 分析立项 → PRD → UX+HTML原型 | `bmad-brainstorming`、`bmad-market/domain/technical-research`、`bmad-product-brief`、`bmad-prfaq`、★`bmad-spec`、`bmad-prd`、`bmad-ux`、`[前端原型skill]` |
+| 产品经理 | 需求原文 + `project-context.md`(红线) + `SPEC.md`(机读契约) | 分析立项 → PRD → UX+HTML原型 | `bmad-brainstorming`、`bmad-market/domain/technical-research`、`bmad-product-brief`、`bmad-prfaq`、★`bmad-spec`、`bmad-prd`、`bmad-ux`、`delivery-prototype-html` |
 | 项目经理 | SPEC.md + 已签字客户确认记录 | 客户签字 → 方案化就绪 → 拆任务推飞书 → 验收 | `delivery-client-gate`、`bmad-architecture`、`bmad-check-implementation-readiness`、`bmad-create-epics-and-stories`、`delivery-feishu-sync`、`delivery-acceptance-gate` |
 | 研发工程师 | 飞书子任务 + story AC + `project-context.md`(验收阈值) | 敏捷研发 | 从飞书领活 → Superpowers（TDD/调试/验证）→ 自测 → 回飞书改阶段状态 → `delivery-sprint-sync`（单向刷新本地状态镜像） |
 | AI 工程师 | stories/AC + 阈值 | AI 评测 | `delivery-eval-loop` |
-| 架构师/技术lead | SPEC.md + PRD | 方案化/技术就绪 | `bmad-architecture` |
+| 架构师/技术lead | SPEC.md + PRD | 方案化/技术就绪 | `bmad-architecture`、`bmad-check-implementation-readiness` |
+| 流程维护者 | 项目产物 + 本地状态镜像 | 一致性检查、追溯、预演 | `delivery-check`、`delivery-trace`、`delivery-status`、`delivery-dry-run` |
 
 > ★ `bmad-spec` 的 SPEC.md 是全链机读契约：Why/Capabilities/Constraints/Non-goals/Success signal 五个字段，下游所有关卡（客户签字范围快照、架构输入、验收 DoD）从它读机读字段，不再靠文件名 glob 猜。
 > `delivery-prototype-html` 已提供前端原型能力，位于 PRD→客户签字之间，产出整页可交互 HTML 演示（非 bmad-ux 的 2-4 屏静态 mock）。
@@ -56,12 +57,13 @@ BMAD 在此当方法论脚手架 + 文档工具箱——前端探索、研究、
 </step>
 
 <step n="2" goal="识别角色">
-  <action>问："你是哪个角色？产品经理 / 项目经理 / 研发 / AI 工程师？"（或从自述判断）</action>
+  <action>问："你是哪个角色？产品经理 / 项目经理 / 架构师或技术 Lead / 研发 / AI 工程师 / 流程维护者？"（或从自述判断）</action>
   <action>发放该角色的「工作依据」——明确告诉他干活的凭据是什么，不凭空发挥。</action>
 </step>
 
 <step n="3" goal="定位当前阶段">
-  <action>扫产物判断走到哪。**先滤噪声**：名含"模板"/template、或路径含 `skills/`、`_bmad/`、`.agents/`、`.claude/` 的都是模板或 skill 资产，不算真实产物（否则会被 `xx-PRD模板.md`、`prd-template.md` 骗）。</action>
+  <action>**优先读 `project-progress.yaml`**（如存在）：直接获取 `current_stage` 和各阶段状态，告诉用户"你现在在这里"和"下一步做什么"。这是最快的路径，无需扫描全量产物。</action>
+  <action>**若无 progress.yaml，回退产物扫描**：先滤噪声——名含"模板"/template、或路径含 `skills/`、`_bmad/`、`\.agents/`、`\.claude/` 的都是模板或 skill 资产，不算真实产物。</action>
   <action>按流水线顺序查真实产物：SPEC.md → PRD → UX/原型 → HTML演示原型 → 客户确认记录 → architecture/readiness-report → 飞书映射/任务 → 评测报告 → 验收报告。正常情况找"最后一个已完成阶段"，下一环即当前动作。</action>
   <action>**检测乱序/不一致**（真实项目常见，尤其 delivery-flow 引入前已有存量工作）：若某后段产物存在、但其前置关卡产物缺失（典型：飞书已有任务却无客户确认记录），**不要假装线性推进**——明确标出不一致，提示补齐前置关卡后再继续。</action>
   <action>**缺客户确认记录时先问，别急着让人重签**：客户是否已通过别的形式确认过范围（往返确认的甲方原始材料 / 确认邮件 / 会议纪要）？是 → 走 `delivery-client-gate` 的 **B 入口**登记既有确认（不重签）；否 → 走 A 入口组织签字。</action>

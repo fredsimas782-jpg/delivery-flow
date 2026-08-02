@@ -33,6 +33,8 @@ description: 把用户故事拆成飞书「清单>父任务>子任务」三层�
 - 已确认的 stories/AC（BMAD create-story 产出或等价故事文档）
 - `lark-task`（建清单/任务）、`lark-base`（自定义字段/看板视图）
 - 映射表 `_映射表.json`（story/工作单元 ↔ 飞书 task_id），防重复推送。新建时参考 `templates/_映射表模板.json`
+- 任务推送模板 `templates/_飞书任务模板.json`（父任务/子任务的标准结构和三要素）
+- 清单创建模板 `templates/_飞书清单模板.json`（清单命名和参数）
 
 ## 输出
 
@@ -70,16 +72,28 @@ description: 把用户故事拆成飞书「清单>父任务>子任务」三层�
 
 ## lark-cli 速查
 
+> 详细模板见 `templates/_飞书任务模板.json`（任务结构+三要素）和 `templates/_飞书清单模板.json`（清单参数）。
+
 ```bash
 # 前置：先读 lark-shared 的 SKILL.md（认证/身份）
 # 身份：--as user 操作个人任务；每次调 API 前先 schema 查参数，不猜字段；写操作前先 --dry-run
 
-lark-cli task +tasklist-create --name "【<项目名>】<模块>" --as user   # ①建清单
-lark-cli schema task.custom_fields.create                             # 查参数→建「阶段状态」字段
-lark-cli task +create ...                                             # ②建父任务(整体需求+附件)
-lark-cli schema task.subtasks.create                                  # 查参数→③在父任务下建子任务
-lark-cli task subtasks create --params '{"task_guid":"<父任务guid>"}' --data '{...}' --as user
-lark-cli task tasklists tasks --as user ...                           # 回读某清单任务(含父子)
+# ① 建清单（参考 _飞书清单模板.json）
+lark-cli task +tasklist-create --name "【<项目名>】<模块>" --as user
+
+# ② 查自定义字段参数 → 建「阶段状态」字段
+lark-cli schema task.custom_fields.create
+
+# ③ 建父任务（参考 _飞书任务模板.json 的 parent_task 结构）
+lark-cli task +create --data '{"title":"...","description":"..."}' --as user
+
+# ④ 查子任务 schema → 建子任务（参考 _飞书任务模板.json 的 subtask 结构）
+lark-cli schema task.subtasks.create
+lark-cli task subtasks create --params '{"task_guid":"<父任务guid>"}' \
+  --data '{"title":"...","description":"...","tasklists":[{"tasklist_guid":"<清单guid>"}]}' --as user
+
+# ⑤ 回读验证
+lark-cli task tasklists tasks --as user ...
 ```
 
 - 飞书 API **无法创建"清单文件夹"**（左侧分组），只能靠命名前缀 `【<项目名>】` 归拢；左侧文件夹需在飞书 App 里手动拖入（一次性）。

@@ -1,0 +1,11 @@
+{
+  "_说明": "飞书清单创建参数模板，由 feishu-sync 填充项目名和模块名后调用 lark-cli 创建",
+
+  "tasklist": {
+    "name": "【{{project_name}}】{{module_name}}",
+    "description": "{{module_description}}"
+  },
+
+  "_usage": "lark-cli task +tasklist-create --name \"【示例项目】用户管理模块\" --as user",
+  "_note": "飞书无法创建清单文件夹做分组，靠命名前缀【项目名】归拢；左侧文件夹需手动拖入（一次性操作）"
+}

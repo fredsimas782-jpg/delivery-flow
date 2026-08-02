@@ -55,6 +55,7 @@ description: 乙方交付的客户验收关卡（出口关卡，与 client-gate 
   <action>客户在验收报告签字（形式与时间留痕，同 client-gate）。</action>
   <check if="已签字且全通过">
     <action>关卡状态「已交付」。提示收尾：归档、转运维、（如有）回款依据。</action>
+    <action>**写入进度**：更新 `project-progress.yaml`，将 `acceptance_gate` 阶段标记为 `done` + `completed_at`，`current_stage` 留空（流程完成）。</action>
   </check>
   <check if="未签字或部分通过">
     <action>关卡状态「未交付」。记录未决项、责任方、解决时限。项目不得标记完成。</action>

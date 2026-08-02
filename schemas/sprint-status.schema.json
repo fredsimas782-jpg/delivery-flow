@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "sprint-status.schema.json",
+  "type": "object",
+  "required": ["source", "stories"],
+  "properties": {
+    "source": {"const": "feishu-read-only-mirror"},
+    "refreshed_at": {"type": "string"},
+    "stories": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "status"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "status": {"enum": ["planned", "todo", "in_progress", "in_review", "done", "blocked"]},
+          "blocked_by": {"type": "array", "items": {"type": "string"}}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

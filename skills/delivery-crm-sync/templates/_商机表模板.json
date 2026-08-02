@@ -1,0 +1,44 @@
+{
+  "_说明": "飞书多维表格「商机表」的字段结构模板，由 crm-sync 建表时参考。商机表是销售漏斗核心表，一行一个商机，主键=商机编号。",
+
+  "table": {
+    "name": "商机表",
+    "_说明": "建议放在【<团队/项目>】商机CRM 多维表格 App 下"
+  },
+
+  "fields": [
+    { "field_name": "商机编号", "type": 1, "_说明": "主键=Trace 根 OPP-YYYY-NNN，文本，幂等靠它", "_type_note": "1=多行文本" },
+    { "field_name": "商机名称", "type": 1, "_说明": "如：XX公司-智能客服系统" },
+    { "field_name": "客户", "type": 1, "_说明": "客户单位名，与客户表关联（也可用双向关联字段 type=18）" },
+    {
+      "field_name": "阶段状态",
+      "type": 3,
+      "_type_note": "3=单选",
+      "property": {
+        "options": [
+          { "name": "线索" },
+          { "name": "商机" },
+          { "name": "方案" },
+          { "name": "报价" },
+          { "name": "谈判" },
+          { "name": "签约" },
+          { "name": "输单" }
+        ]
+      },
+      "_说明": "销售漏斗流转字段，挂看板视图按此分组"
+    },
+    { "field_name": "预算意向", "type": 1, "_说明": "客户口头/书面预算范围（文本，保留原始表述）" },
+    { "field_name": "工期意向", "type": 1, "_说明": "客户期望交付时间" },
+    { "field_name": "报价金额", "type": 2, "_type_note": "2=数字", "_说明": "最新一轮报价含税金额" },
+    { "field_name": "负责人", "type": 11, "_type_note": "11=人员", "_说明": "售前负责人" },
+    { "field_name": "来源渠道", "type": 3, "_type_note": "3=单选", "property": { "options": [ { "name": "转介绍" }, { "name": "官网" }, { "name": "招投标" }, { "name": "存量客户" }, { "name": "展会" } ] } },
+    { "field_name": "备注", "type": 1 }
+  ],
+
+  "views": [
+    { "view_name": "漏斗看板", "view_type": "kanban", "_说明": "按「阶段状态」分组的看板视图，一眼看清漏斗" }
+  ],
+
+  "_幂等规则": "推送前查 _商机映射表.json：商机编号已存在→update record；不存在→create 后立即回写 record_id。绝不盲目新建。",
+  "_type_speed": "飞书字段 type：1=多行文本 2=数字 3=单选 4=多选 5=日期 11=人员 18=单向关联 21=双向关联。建字段前先跑 lark-cli schema base.field.create 核对。"
+}

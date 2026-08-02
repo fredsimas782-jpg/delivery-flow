@@ -9,10 +9,18 @@
       "type": "string",
       "description": "项目名称，与 project-context.md 一致"
     },
+    "trace_id": {
+      "type": "string",
+      "description": "商机编号（Trace 根），格式 OPP-YYYY-NNN，由 delivery-presales 生成、deal-gate 放行时写入；无售前阶段的存量项目可留空",
+      "pattern": "^(OPP-\\d{4}-\\d+)?$"
+    },
     "current_stage": {
       "type": "string",
       "description": "当前所处阶段（最新 in_progress 的阶段）",
       "enum": [
+        "opportunity",
+        "proposal",
+        "deal_gate",
         "requirements",
         "analysis",
         "prd",

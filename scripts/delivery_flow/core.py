@@ -157,10 +157,30 @@ def summarize_findings(findings: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
+TRACE_ID_RE = re.compile(r"商机编号[:：]\s*(OPP-\d{4}-\d+)")
+
+
+def read_trace_id(root: Path) -> str:
+    """读取商机编号（Trace 根）：优先 SPEC.md 头部引用行，回退 project-progress.yaml 顶层 trace_id。"""
+    spec = root / "SPEC.md"
+    if spec.is_file():
+        try:
+            match = TRACE_ID_RE.search(spec.read_text(encoding="utf-8"))
+        except OSError:
+            match = None
+        if match:
+            return match.group(1)
+    progress = read_progress(root / "project-progress.yaml")
+    if progress and progress.get("trace_id"):
+        return str(progress["trace_id"])
+    return ""
+
+
 def trace_project(root: Path) -> dict[str, Any]:
     """基于文件和映射表生成只读追溯摘要，不伪造缺失链路。"""
     mapping, error, mapping_path = load_mapping(root)
     ids, mapping_errors = mapping_ids(mapping)
+    trace_id = read_trace_id(root)
     links = {
         "spec": (root / "SPEC.md").is_file(),
         "stories": find_first(root, ("stories/**/*.md", "**/*story*.md", "**/*stories*.md")) is not None,
@@ -168,8 +188,16 @@ def trace_project(root: Path) -> dict[str, Any]:
         "evaluation": find_first(root, ("*评测报告*.md", "**/*评测报告*.md")) is not None,
         "acceptance": find_first(root, ("*验收报告*.md", "**/*验收报告*.md")) is not None,
     }
+    # 售前上游链路仅在存在 Trace 根（商机编号）时纳入判定，避免为无售前的存量项目伪造缺链
+    if trace_id:
+        links = {
+            "opportunity": find_first(root, ("*商机档案*.md", "**/*商机档案*.md")) is not None,
+            "deal": find_first(root, ("立项包.md", "**/立项包.md", "*合同签约确认*.md", "**/*合同签约确认*.md")) is not None,
+            **links,
+        }
     missing = [name for name, present in links.items() if not present]
     return {
+        "trace_id": trace_id,
         "links": links,
         "mapping_path": str(mapping_path.relative_to(root)),
         "mapped_subtask_count": len(ids),
@@ -218,6 +246,9 @@ def status_summary(root: Path, status_path: Path | None = None) -> dict[str, Any
 
 
 STAGES_ORDER = (
+    # 售前上游三阶段（delivery-presales / delivery-deal-gate）
+    "opportunity", "proposal", "deal_gate",
+    # 交付主流水线（原 14 阶段不变）
     "requirements", "analysis", "prd", "ux", "prototype",
     "client_gate", "architecture", "tech_readiness",
     "story_breakdown", "feishu_sync", "development",
@@ -233,7 +264,7 @@ def read_progress(path: Path) -> dict[str, Any] | None:
         text = path.read_text(encoding="utf-8")
     except OSError:
         return None
-    result: dict[str, Any] = {"project": "", "current_stage": "", "stages": {}}
+    result: dict[str, Any] = {"project": "", "current_stage": "", "trace_id": "", "stages": {}}
     current_stage: str | None = None
     current_stage_data: dict[str, str] = {}
     for raw in text.splitlines():
@@ -245,7 +276,7 @@ def read_progress(path: Path) -> dict[str, Any] | None:
         if indent == 0 and ":" in stripped:
             key, _, val = stripped.partition(":")
             key, val = key.strip(), val.strip().strip('"').strip("'")
-            if key in ("project", "current_stage"):
+            if key in ("project", "current_stage", "trace_id"):
                 result[key] = val
             elif key == "stages":
                 continue
@@ -289,6 +320,7 @@ def current_stage_summary(root: Path) -> dict[str, Any]:
         return {
             "source": "project-progress.yaml",
             "project": progress.get("project", ""),
+            "trace_id": progress.get("trace_id", ""),
             "current_stage": current,
             "current_status": current_info.get("status", ""),
             "next_stage": next_stage,
@@ -298,6 +330,11 @@ def current_stage_summary(root: Path) -> dict[str, Any]:
         }
     # 回退：通过产物扫描推断（与 onboarding step 3 逻辑一致）
     checks = [
+        # 售前上游三阶段
+        ("opportunity", find_first(root, ("*商机档案*.md", "**/*商机档案*.md"))),
+        ("proposal", find_first(root, ("*报价单*.md", "**/*报价单*.md"))),
+        ("deal_gate", find_first(root, ("立项包.md", "**/立项包.md", "*合同签约确认*.md", "**/*合同签约确认*.md"))),
+        # 交付主流水线
         ("prd", root / "PRD.md"),
         ("ux", root / "UX.md"),
         ("prototype", root / "prototype" / "index.html"),

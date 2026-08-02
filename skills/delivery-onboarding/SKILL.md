@@ -16,13 +16,17 @@ BMAD 在此当方法论脚手架 + 文档工具箱——前端探索、研究、
 ## 全景流水线（谁在哪一环）
 
 ```
-[商务确认]─→需求接入→分析立项→PRD→UX+HTML原型→【A:客户签字】→架构/就绪校验→拆任务进飞书→敏捷研发→【B:AI评测】→测试→【C:客户验收】
-(商务BD)     PM       PM     PM   PM+UX         项目经理      产品/架构师      项目经理       研发       AI工程师  QA     项目经理
+商机确认→方案/报价→【0:签约】→需求接入→分析立项→PRD→UX+HTML原型→【A:客户签字】→架构/就绪校验→拆任务进飞书→敏捷研发→【B:AI评测】→测试→【C:客户验收】
+ 售前      售前     售前/商务    PM        PM     PM   PM+UX         项目经理      产品/架构师      项目经理       研发       AI工程师  QA     项目经理
 ```
 
-方括号 = delivery-flow 自建的四个关卡。`SPEC.md`（机读契约）在 PRD 阶段产出，是全链共享脊柱——客户签字范围快照、架构输入、验收依据都从它读机读字段，不靠文件名猜。
+方括号 = delivery-flow 自建的**五个关卡**（0 签约 + A 客户签字 + B AI评测 + C 客户验收，加就绪校验技术门）。
+**Trace 根 = 商机编号 `OPP-{YYYY}-{NNN}`**：售前在商机确认时生成，签约关卡放行时写入 `project-progress.yaml` 的 `trace_id`，并经立项包播种到 `SPEC.md` 头部引用行——从此商机→SPEC→Story→飞书→评测→验收串成一条可追溯链，商务与交付不再断层。
+`SPEC.md`（机读契约）在 PRD 阶段产出，是全链共享脊柱——客户签字范围快照、架构输入、验收依据都从它读机读字段，不靠文件名猜；其 Constraints/Success signal 的上游来源是**立项包**（deal-gate 产出的商务基线），PM 起需求时读立项包，不再人肉转述。
 
 【阶段说明】
+0. **售前**（delivery-presales）：商机确认（生成商机编号=Trace 根）→ 委托 BMAD 做商机分析/方案 →（可选）演示原型 → 报价 → 谈判跟进；商机/客户/合同落飞书 CRM（delivery-crm-sync）
+0.5 **【0: 签约】**（delivery-deal-gate）：合同签约冻结商务基线，放行产出**立项包**（客户/合同范围/预算工期红线/关键约束），移交 PM 起需求接入。未签约不进需求接入
 1. **分析立项**：brainstorming 发散 → market/domain/technical-research 联网深挖 → product-brief / prfaq 锁概念（BMAD 前端探索全开，新人靠 coached 引导问对问题）
 2. **规划**：coached PRD（引导式发现）+ bmad-ux（视觉定调）+ **HTML 演示原型**（整页可交互，客户签字前可点着看）+ SPEC.md 机读契约
 3. **【A: 客户签字】**（delivery-client-gate）：读 SPEC.md 生成范围快照，客户确认后冻结变更基线
@@ -37,7 +41,8 @@ BMAD 在此当方法论脚手架 + 文档工具箱——前端探索、研究、
 
 | 角色 | 工作依据 | 主责阶段 | 调用 |
 |---|---|---|---|
-| 产品经理 | 需求原文 + `project-context.md`(红线) + `SPEC.md`(机读契约) | 分析立项 → PRD → UX+HTML原型 | `bmad-brainstorming`、`bmad-market/domain/technical-research`、`bmad-product-brief`、`bmad-prfaq`、★`bmad-spec`、`bmad-prd`、`bmad-ux`、`delivery-prototype-html` |
+| 售前/商务 | 客户咨询/线索 + 客户诉求原文 | 商机确认 → 方案/报价 → 签约 → 立项移交 | `delivery-presales`（生成商机编号=Trace 根、委托 BMAD 分析）、`delivery-deal-gate`（签约冻结商务基线、产立项包）、`delivery-crm-sync`（商机/客户/合同落飞书多维表格） |
+| 产品经理 | 立项包（商务基线）+ `project-context.md`(红线) + `SPEC.md`(机读契约) | 分析立项 → PRD → UX+HTML原型 | `bmad-brainstorming`、`bmad-market/domain/technical-research`、`bmad-product-brief`、`bmad-prfaq`、★`bmad-spec`、`bmad-prd`、`bmad-ux`、`delivery-prototype-html` |
 | 项目经理 | SPEC.md + 已签字客户确认记录 | 客户签字 → 方案化就绪 → 拆任务推飞书 → 验收 | `delivery-client-gate`、`bmad-architecture`、`bmad-check-implementation-readiness`、`bmad-create-epics-and-stories`、`delivery-feishu-sync`、`delivery-acceptance-gate` |
 | 研发工程师 | 飞书子任务 + story AC + `project-context.md`(验收阈值) | 敏捷研发 | 从飞书领活 → Superpowers（TDD/调试/验证）→ 自测 → 回飞书改阶段状态 → `delivery-sprint-sync`（单向刷新本地状态镜像） |
 | AI 工程师 | stories/AC + 阈值 | AI 评测 | `delivery-eval-loop` |
@@ -81,6 +86,7 @@ BMAD 在此当方法论脚手架 + 文档工具箱——前端探索、研究、
 
 > 诚实说明：这些关卡是**流程约定**，没有技术强制——任何人硬跳过也没程序拦。但跳过=破坏交付可追溯性，团队须共识遵守。
 
+0. **合同没签约 → 不进需求接入**（deal-gate：商务基线未冻结、无立项包，PM 起需求就是无源之水）
 1. **客户没签字 → 不进开发**（client-gate）
 2. **技术就绪不达标 → 不拆任务**（architecture + readiness-check：AD-n 不变量 + 四文档对齐是 PM 切任务前的技术门，缺则补回）
 3. **任务三要素不全 → 不推飞书**（feishu-sync）

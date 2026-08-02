@@ -1,0 +1,19 @@
+{
+  "_说明": "飞书多维表格「客户表」的字段结构模板，由 crm-sync 建表时参考。一行一个客户单位，商机表按客户名关联。",
+
+  "table": {
+    "name": "客户表",
+    "_说明": "建议放在【<团队/项目>】商机CRM 多维表格 App 下"
+  },
+
+  "fields": [
+    { "field_name": "客户单位", "type": 1, "_说明": "单位全称，商机表关联主键", "_type_note": "1=多行文本" },
+    { "field_name": "所属行业", "type": 3, "_type_note": "3=单选", "property": { "options": [ { "name": "金融" }, { "name": "制造" }, { "name": "政企" }, { "name": "互联网" }, { "name": "教育" }, { "name": "医疗" }, { "name": "其他" } ] } },
+    { "field_name": "关键联系人", "type": 1, "_说明": "姓名/角色/联系方式" },
+    { "field_name": "决策人", "type": 1, "_说明": "姓名/角色" },
+    { "field_name": "客户背景", "type": 1, "_说明": "规模/既往合作/采购习惯，一句话" }
+  ],
+
+  "_幂等规则": "推送前查 _商机映射表.json 的 customers 段：客户单位已存在→update；不存在→create 后回写 record_id。",
+  "_type_speed": "飞书字段 type：1=多行文本 2=数字 3=单选 11=人员。建字段前先跑 lark-cli schema base.field.create 核对。"
+}

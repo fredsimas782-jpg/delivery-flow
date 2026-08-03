@@ -1,0 +1,56 @@
+{
+  "_说明": "商机编号/客户/合同 ↔ 飞书多维表格 record_id 的映射，是 upsert 防重复的地基。机器维护，勿手改。",
+  "_结构说明": "app_token 定位 CRM 多维表格 App；三段 opportunities/customers/contracts 各存 本地键→{record_id}。商机编号(OPP-YYYY-NNN)是 opportunities 段主键，也是贯穿全链路的 Trace 根。",
+  "_同步规则": "推送前先查此表：本地键已存在→update record（更新阶段状态/金额等）；不存在→create 后立即回写 record_id 到此表。绝不盲目新建。",
+
+  "project": "<项目/团队名>",
+  "feishu_user_open_id": "<操作用户open_id>",
+  "feishu_user_name": "<操作用户姓名>",
+
+  "base": {
+    "_说明": "CRM 多维表格 App 与三张表的定位信息，建表后回填。",
+    "app_token": "<多维表格App token>",
+    "app_name": "【<团队/项目>】商机CRM",
+    "tables": {
+      "商机表": {
+        "table_id": "<商机表table_id>",
+        "阶段状态_field_id": "<阶段状态单选字段id>",
+        "options": {
+          "线索": "<option_id>",
+          "商机": "<option_id>",
+          "方案": "<option_id>",
+          "报价": "<option_id>",
+          "谈判": "<option_id>",
+          "签约": "<option_id>",
+          "输单": "<option_id>"
+        }
+      },
+      "客户表": { "table_id": "<客户表table_id>" },
+      "合同表": { "table_id": "<合同表table_id>" }
+    }
+  },
+
+  "opportunities": {
+    "_说明": "本地键=商机编号 OPP-YYYY-NNN（主键=Trace 根）→ 飞书商机记录 record_id。",
+    "OPP-2026-001": {
+      "record_id": "<商机记录record_id>",
+      "_stage": "商机",
+      "_note": "示例节点，实际由 crm-sync 回写"
+    }
+  },
+
+  "customers": {
+    "_说明": "本地键=客户单位全称 → 飞书客户记录 record_id。",
+    "<客户单位全称>": {
+      "record_id": "<客户记录record_id>"
+    }
+  },
+
+  "contracts": {
+    "_说明": "本地键=关联商机编号 → 飞书合同记录 record_id（签约后才有）。",
+    "OPP-2026-001": {
+      "record_id": "<合同记录record_id>",
+      "_contract_no": "<合同编号>"
+    }
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "crm-mapping.json",
+  "title": "crm-mapping",
+  "description": "商机/客户/合同 ↔ 飞书多维表格 record_id 的映射表 schema（_商机映射表.json），由 delivery-crm-sync 维护。商机编号(OPP-YYYY-NNN) 是 opportunities 段主键，也是贯穿全链路的 Trace 根。",
+  "type": "object",
+  "required": ["opportunities"],
+  "properties": {
+    "project": {"type": "string"},
+    "feishu_user_open_id": {"type": "string"},
+    "feishu_user_name": {"type": "string"},
+    "base": {
+      "type": "object",
+      "description": "CRM 多维表格 App 与三张表的定位信息，建表后回填",
+      "properties": {
+        "app_token": {"type": "string"},
+        "app_name": {"type": "string"},
+        "tables": {
+          "type": "object",
+          "properties": {
+            "商机表": {
+              "type": "object",
+              "properties": {
+                "table_id": {"type": "string"},
+                "阶段状态_field_id": {"type": "string"},
+                "options": {
+                  "type": "object",
+                  "description": "销售漏斗单选项 → option_id",
+                  "additionalProperties": {"type": "string"}
+                }
+              },
+              "additionalProperties": true
+            },
+            "客户表": {
+              "type": "object",
+              "properties": {"table_id": {"type": "string"}},
+              "additionalProperties": true
+            },
+            "合同表": {
+              "type": "object",
+              "properties": {"table_id": {"type": "string"}},
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "opportunities": {
+      "type": "object",
+      "description": "本地键=商机编号 OPP-YYYY-NNN（主键=Trace 根）→ 飞书商机记录 record_id",
+      "propertyNames": {"pattern": "^(OPP-\\d{4}-\\d+|_.*)$"},
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "record_id": {"type": "string"},
+          "_stage": {"type": "string"},
+          "_note": {"type": "string"}
+        },
+        "additionalProperties": true
+      }
+    },
+    "customers": {
+      "type": "object",
+      "description": "本地键=客户单位全称 → 飞书客户记录 record_id",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {"record_id": {"type": "string"}},
+        "additionalProperties": true
+      }
+    },
+    "contracts": {
+      "type": "object",
+      "description": "本地键=关联商机编号 → 飞书合同记录 record_id（签约后才有）",
+      "propertyNames": {"pattern": "^(OPP-\\d{4}-\\d+|_.*)$"},
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "record_id": {"type": "string"},
+          "_contract_no": {"type": "string"}
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

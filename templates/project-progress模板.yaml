@@ -5,11 +5,27 @@
 
 project: "示例项目"
 
+# 商机编号（Trace 根）：由 delivery-presales 在商机确认时生成，deal-gate 放行时写入这里；
+# 贯穿商机→SPEC→Story→飞书→评测→验收全链路。无售前阶段的存量项目可留空。
+trace_id: "OPP-2026-001"
+
 # 当前所处阶段（最新 in_progress 的阶段）
 current_stage: "requirements"
 
 # 各阶段状态：pending → in_progress → done
 stages:
+  # 售前上游三阶段（delivery-presales / delivery-deal-gate）
+  opportunity:
+    status: done
+    completed_at: "2026-07-15"
+  proposal:
+    status: done
+    completed_at: "2026-07-17"
+  deal_gate:
+    status: done
+    completed_at: "2026-07-18"
+    gate_evidence: "合同签约确认记录-2026-07-18.md"
+  # 交付主流水线
   requirements:
     status: done
     completed_at: "2026-07-20"

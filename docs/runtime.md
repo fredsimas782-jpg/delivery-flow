@@ -28,7 +28,7 @@ python -m scripts.delivery_flow.cli progress --root <项目根目录>
 ## 能力边界
 
 - `check`：检查 SPEC、客户确认、技术就绪、Story、映射表和流程乱序；
-- `trace`：报告 SPEC → Story → 映射 → 评测/验收链路的缺项；
+- `trace`：报告 商机 → SPEC → Story → 映射 → 评测/验收链路的缺项（存在商机编号 Trace 根时向上游延伸到售前）；
 - `status`：只读聚合本地状态镜像（Story 粒度）；
 - `dry-run`：预览飞书任务操作，不实际调用飞书或写入映射表；
 - `progress`：显示流水线宏观阶段（读 `project-progress.yaml`，无则回退到产物扫描推断）。
@@ -45,6 +45,10 @@ python -m scripts.delivery_flow.cli progress --root <项目根目录>
 | 3 | 发生禁止的网络或写操作 |
 | 4 | 内部异常 |
 
+## 售前/商务的纳入方式
+
+售前编排（`delivery-presales`）、签约关卡（`delivery-deal-gate`）与 CRM 同步（`delivery-crm-sync`）已作为流水线上游一环纳入，与其它 `delivery-*` skill 同为纯插件流程。它们对运行时的唯一要求是：`core.py` 识别 `opportunity`/`proposal`/`deal_gate` 三个宏观阶段、`trace_project` 在存在商机编号（Trace 根）时向上游延伸。**运行时本身仍只读**——商机/客户/合同数据的实际写入由 `lark-base` skill 承担，`core.py` 不联网、不写飞书，与需求侧 `delivery-feishu-sync` 的分工一致。
+
 ## 后续边界
 
-真实飞书 API、写入适配器、增量同步、商务 CRM 和完整流程平台不属于当前运行时自动化范围。
+真实飞书 API、写入适配器、增量同步和完整流程平台不属于当前运行时自动化范围（CRM 数据写入同样交由 lark skill，运行时只读不变）。
